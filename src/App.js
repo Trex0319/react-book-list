@@ -2,33 +2,35 @@ import React, { useState, useEffect, useMemo } from "react";
 import { bookData } from "./data/books";
 
 const BookList = () => {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState(bookData);
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const categories = useMemo(() => {
     let options = [];
     /* Instruction: Get all categories from books */
-    if (books && books.length > 0) {
-      books.forEach((book) => {
-        // to make sure the genre wasn't already in the options
-        if (!options.includes(book.categories)) {
-          options.push(book.categories);
+    bookData.forEach((book) => {
+      // to make sure the genre wasn't already in the options
+      book.categories.forEach((c) => {
+        if (!options.includes(c)) {
+          options.push(c);
         }
       });
-    }
+    });
     return options;
-  }, [books]);
-
-  useEffect(() => {
-    /* instruction: load books from the books data */
-    setBooks(bookData);
   }, []);
 
   useEffect(() => {
+    let newBooks = [...bookData];
     /* Instruction: filter books by selectedCategory */
-    /* Instruction: set filtered books to books state */
     /* Instruction: set books to all books if selectedCategory is empty */
-  }, [selectedCategory]);
+    if (selectedCategory !== "") {
+      newBooks = newBooks.filter((b) =>
+        b.categories.includes(selectedCategory)
+      );
+    }
+    /* Instruction: set filtered books to books state */
+    setBooks(newBooks);
+  }, [bookData, selectedCategory]);
 
   return (
     <div className="container">
@@ -51,7 +53,7 @@ const BookList = () => {
           <div className="col-4 my-5" key={book.title}>
             <div className="card">
               <img
-                src="../images/373473206_310152225021877_3598215904533382118_n.jpg"
+                src={"/images/" + book.image}
                 alt={book.title}
                 className="card-img-top"
               />
